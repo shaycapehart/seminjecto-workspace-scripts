@@ -1,6 +1,6 @@
 module.exports = {
-  url: 'https://example.com',
+  url: 'https://lamnhan.com/workspace-addon-scripts',
   fileRender: {
-    'README.md': 'basicx'
+    'README.md': 'clix'
   }
 };
