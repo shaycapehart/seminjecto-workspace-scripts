@@ -15,7 +15,7 @@ export class BuildCommand {
   async run() {
     const {inputPath, iifePath, tsconfigPath} = this.optionService.getOptions();
     // compile
-    await this.compile(tsconfigPath);
+    await this.compileCode(tsconfigPath);
     // bundle
     await this.rollupService.bundleCode(inputPath, iifePath);
     // done
@@ -24,11 +24,12 @@ export class BuildCommand {
     );
   }
 
-  private async compile(tsconfigPath: string) {
+  private async compileCode(tsconfigPath: string) {
     // save temp tsconfig
     await outputJson(tsconfigPath, {
       extends: './node_modules/gts/tsconfig-google.json',
       compilerOptions: {
+        moduleResolution: 'Node',
         module: 'ESNext',
         rootDir: '.',
         skipLibCheck: true,
