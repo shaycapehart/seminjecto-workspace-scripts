@@ -50,8 +50,9 @@ export class PushCommand {
     const {copy = '', vendor = ''} = pushOptions;
     // copy the main file
     await this.fileService.copy([iifePath], deployDir);
-    // components
-    await this.saveComponents(deployDir);
+    // sidebars & modals
+    await this.saveComponents(deployDir, 'sidebar');
+    await this.saveComponents(deployDir, 'modal');
     // copy
     await this.copyResources(deployDir, copy);
     // vendor
@@ -66,24 +67,24 @@ export class PushCommand {
     return this.fileService.remove(deployDir);
   }
 
-  private async saveComponents(deployDir: string) {
-    const componentsPath = './src/addon/components';
+  private async saveComponents(deployDir: string, type: string) {
+    const componentsPath = `./src/addon/${type}s`;
     const components = readdirSync(componentsPath, {withFileTypes: true})
       .filter(item => item.isDirectory())
       .map(item => item.name);
     components.forEach(name => {
       // read html
       const html = readFileSync(
-        resolve(componentsPath, name, name + '.component.html')
+        resolve(componentsPath, name, name + `.${type}.html`)
       ).toString();
       // render sass
       const {css: cssResult} = sass.renderSync({
-        file: resolve(componentsPath, name, name + '.component.scss'),
+        file: resolve(componentsPath, name, name + `.${type}.scss`),
       });
       const css = cssResult.toString();
       // transpile ts
       const tsContent = readFileSync(
-        resolve(componentsPath, name, name + '.component.ts')
+        resolve(componentsPath, name, name + `.${type}.ts`)
       )
         .toString()
         .replace(/import [^\n]*/g, ''); // remove all "import ..." lines
@@ -121,7 +122,7 @@ export class PushCommand {
 
       // save file
       outputFileSync(
-        resolve(deployDir, pascalCase(name) + '.html'),
+        resolve(deployDir, pascalCase(name + '-' + type) + '.html'),
         format(output, {
           parser: 'html',
         })
