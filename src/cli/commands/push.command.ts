@@ -33,10 +33,9 @@ export class PushCommand {
       // copy resource to /.deploy
       await this.staging(deployDir, iifePath, options);
       // push using CLASP
-      // this.pushing();
-      console.log('pushing');
+      this.pushing();
       // remove /.deploy
-      // await this.cleanup(deployDir);
+      await this.cleanup(deployDir);
       console.log('cleanup');
       // done
       return this.messageService.logOk('Resource was pushed.');
@@ -52,7 +51,7 @@ export class PushCommand {
     // copy the main file
     await this.fileService.copy([iifePath], deployDir);
     // components
-
+    await this.saveComponents(deployDir);
     // copy
     await this.copyResources(deployDir, copy);
     // vendor
@@ -75,16 +74,16 @@ export class PushCommand {
     components.forEach(name => {
       // read html
       const html = readFileSync(
-        resolve(componentsPath, name, name + '.html')
+        resolve(componentsPath, name, name + '.component.html')
       ).toString();
       // render sass
       const {css: cssResult} = sass.renderSync({
-        file: resolve(componentsPath, name, name + '.scss'),
+        file: resolve(componentsPath, name, name + '.component.scss'),
       });
       const css = cssResult.toString();
       // transpile ts
       const tsContent = readFileSync(
-        resolve(componentsPath, name, name + '.ts')
+        resolve(componentsPath, name, name + '.component.ts')
       )
         .toString()
         .replace(/import [^\n]*/g, ''); // remove all "import ..." lines

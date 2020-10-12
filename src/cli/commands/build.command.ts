@@ -1,4 +1,5 @@
 import {execSync} from 'child_process';
+import {outputJson, remove} from 'fs-extra';
 
 import {OptionService} from '../../lib/services/option.service';
 import {MessageService} from '../../lib/services/message.service';
@@ -12,14 +13,31 @@ export class BuildCommand {
   ) {}
 
   async run() {
-    const {inputPath, iifePath} = this.optionService.getOptions();
+    const {inputPath, iifePath, tsconfigPath} = this.optionService.getOptions();
     // compile
-    execSync('npx tsc', {stdio: 'ignore'});
+    await this.compile(tsconfigPath);
     // bundle
     await this.rollupService.bundleCode(inputPath, iifePath);
     // done
     return this.messageService.logOk(
       'Build addon completed, you may now push to the server.'
     );
+  }
+
+  private async compile(tsconfigPath: string) {
+    // save temp tsconfig
+    await outputJson(tsconfigPath, {
+      extends: './node_modules/gts/tsconfig-google.json',
+      compilerOptions: {
+        module: 'ESNext',
+        rootDir: '.',
+        skipLibCheck: true,
+      },
+      include: ['src/**/*.ts'],
+    });
+    // compile
+    execSync('npx tsc -p ' + tsconfigPath, {stdio: 'ignore'});
+    // remove temp tsconfig
+    await remove(tsconfigPath);
   }
 }
