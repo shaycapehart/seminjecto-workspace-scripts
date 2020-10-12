@@ -36,7 +36,6 @@ export class PushCommand {
       this.pushing();
       // remove /.deploy
       await this.cleanup(deployDir);
-      console.log('cleanup');
       // done
       return this.messageService.logOk('Resource was pushed.');
     }
@@ -69,65 +68,64 @@ export class PushCommand {
 
   private async saveComponents(deployDir: string, type: string) {
     const componentsPath = `./src/addon/${type}s`;
-    const components = readdirSync(componentsPath, {withFileTypes: true})
-      .filter(item => item.isDirectory())
-      .map(item => item.name);
-    components.forEach(name => {
-      // read html
-      const html = readFileSync(
-        resolve(componentsPath, name, name + `.${type}.html`)
-      ).toString();
-      // render sass
-      const {css: cssResult} = sass.renderSync({
-        file: resolve(componentsPath, name, name + `.${type}.scss`),
-      });
-      const css = cssResult.toString();
-      // transpile ts
-      const tsContent = readFileSync(
-        resolve(componentsPath, name, name + `.${type}.ts`)
-      )
-        .toString()
-        .replace(/import [^\n]*/g, ''); // remove all "import ..." lines
-      const {outputText: js} = ts.transpileModule(tsContent, {
-        compilerOptions: {
-          noImplicitUseStrict: true,
-          experimentalDecorators: true,
-          module: ts.ModuleKind.None,
-          target: ts.ScriptTarget.ES5,
-          lib: ['es2015'],
-          skipLibCheck: true,
-        },
-      });
-
-      // build output
-      const output = html
-        .replace(
-          '</head>',
-          !css
-            ? '</head>'
-            : `<style>
-            ${css}
-          </style>
-          </head>`
+    if (await pathExists(componentsPath)) {
+      const components = readdirSync(componentsPath, {withFileTypes: true})
+        .filter(item => item.isDirectory())
+        .map(item => item.name);
+      components.forEach(name => {
+        // read html
+        const html = readFileSync(
+          resolve(componentsPath, name, name + `.${type}.html`)
+        ).toString();
+        // render sass
+        const {css: cssResult} = sass.renderSync({
+          file: resolve(componentsPath, name, name + `.${type}.scss`),
+        });
+        const css = cssResult.toString();
+        // transpile ts
+        const tsContent = readFileSync(
+          resolve(componentsPath, name, name + `.${type}.ts`)
         )
-        .replace(
-          '</body>',
-          !js
-            ? '</body>'
-            : `<script>
-            ${js}
-          </script>
-          </body>`
+          .toString()
+          .replace(/import [^\n]*/g, ''); // remove all "import ..." lines
+        const {outputText: js} = ts.transpileModule(tsContent, {
+          compilerOptions: {
+            experimentalDecorators: true,
+            skipLibCheck: true,
+            module: ts.ModuleKind.None,
+            target: ts.ScriptTarget.ESNext,
+            lib: ['esnext'],
+          },
+        });
+        // build output
+        const output = html
+          .replace(
+            '</head>',
+            !css
+              ? '</head>'
+              : `<style>
+              ${css}
+            </style>
+            </head>`
+          )
+          .replace(
+            '</body>',
+            !js
+              ? '</body>'
+              : `<script>
+              ${js}
+            </script>
+            </body>`
+          );
+        // save file
+        outputFileSync(
+          resolve(deployDir, pascalCase(name + '-' + type) + '.html'),
+          format(output, {
+            parser: 'html',
+          })
         );
-
-      // save file
-      outputFileSync(
-        resolve(deployDir, pascalCase(name + '-' + type) + '.html'),
-        format(output, {
-          parser: 'html',
-        })
-      );
-    });
+      });
+    }
   }
 
   private async copyResources(deployDir: string, input: string) {
