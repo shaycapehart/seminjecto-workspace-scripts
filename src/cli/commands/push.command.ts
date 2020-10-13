@@ -87,7 +87,9 @@ export class PushCommand {
           resolve(componentsPath, name, name + `.${type}.ts`)
         )
           .toString()
-          .replace(/import [^\n]*/g, ''); // remove all "import ..." lines
+          // remove all "import ..."
+          .replace(/import [^;]*/g, '// import ...')
+          .replace(/(\/\/ import ...;)/g, '');
         const {outputText: js} = ts.transpileModule(tsContent, {
           compilerOptions: {
             experimentalDecorators: true,
