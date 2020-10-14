@@ -1,8 +1,8 @@
 <section id="head" data-note="AUTO-GENERATED CONTENT, DO NOT EDIT DIRECTLY!">
 
-# @lamnhan/workspace-addon-scripts
+# @lamnhan/seminjecto-workspace-scripts
 
-**Scripts for building Google Workspace addons.**
+**Scripts for Google Workspace addons.**
 
 </section>
 
@@ -13,7 +13,7 @@
   - [`build`](#command-build)
   - [`push`](#command-push)
   - [`help`](#command-help)
-- [Detail API reference](https://lamnhan.com/workspace-addon-scripts)
+- [Detail API reference](https://lamnhan.com/seminjecto-workspace-scripts)
 
 
 </section>
@@ -23,11 +23,11 @@
 <h2><a name="command-overview"><p>Command overview</p>
 </a></h2>
 
-Scripts for building Google Workspace addons.
+Scripts for Google Workspace addons.
 
-- [`workspace-addon-scripts build`](#command-build)
-- [`workspace-addon-scripts push --copy [value] --vendor [value]`](#command-push)
-- [`workspace-addon-scripts help`](#command-help)
+- [`seminjecto-workspace-scripts build`](#command-build)
+- [`seminjecto-workspace-scripts push --copy [value] --vendor [value]`](#command-push)
+- [`seminjecto-workspace-scripts help`](#command-help)
 
 <h2><a name="command-reference"><p>Command reference</p>
 </a></h2>
@@ -58,6 +58,6 @@ Display help.
 
 ## License
 
-**@lamnhan/workspace-addon-scripts** is released under the [MIT](https://github.com/lamnhan/workspace-addon-scripts/blob/master/LICENSE) license.
+**@lamnhan/seminjecto-workspace-scripts** is released under the [MIT](https://github.com/lamnhan/seminjecto-workspace-scripts/blob/master/LICENSE) license.
 
 </section>

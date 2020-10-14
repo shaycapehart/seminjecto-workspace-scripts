@@ -10,8 +10,8 @@ export class Cli {
   pushCommand: PushCommand;
 
   commander = [
-    'workspace-addon-scripts',
-    'Scripts for building Google Workspace addons.',
+    'seminjecto-workspace-scripts',
+    'Scripts for Google Workspace addons.',
   ];
 
   buildCommandDef: CommandDef = ['build', 'Build distribution package.'];

@@ -1,14 +1,14 @@
 {
-  "name": "@lamnhan/workspace-addon-scripts",
-  "version": "1.0.2",
-  "description": "Scripts for building Google Workspace addons.",
+  "name": "@lamnhan/seminjecto-workspace-scripts",
+  "version": "1.0.3",
+  "description": "Scripts for Google Workspace addons.",
   "author": "Lam Nhan",
   "homepage": "https://lamnhan.com",
   "license": "MIT",
   "main": "src/public-api.js",
   "typings": "src/public-api.d.ts",
   "bin": {
-    "workspace-addon-scripts": "src/bin.js"
+    "seminjecto-workspace-scripts": "src/bin.js"
   },
   "files": [
     "src",
@@ -31,10 +31,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lamnhan/workspace-addon-scripts.git"
+    "url": "https://github.com/lamnhan/seminjecto-workspace-scripts.git"
   },
   "bugs": {
-    "url": "https://github.com/lamnhan/workspace-addon-scripts/issues"
+    "url": "https://github.com/lamnhan/seminjecto-workspace-scripts/issues"
   },
   "dependencies": {
     "chalk": "^4.1.0",
