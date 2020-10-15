@@ -33,7 +33,7 @@ export class BuildCommand {
         module: 'ESNext',
         rootDir: '.',
         skipLibCheck: true,
-        lib: ['DOM'],
+        lib: ['ESNext', 'DOM'],
       },
       include: ['src/**/*.ts'],
     });
