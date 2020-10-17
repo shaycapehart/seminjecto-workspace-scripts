@@ -3,21 +3,17 @@ import {outputJson, remove} from 'fs-extra';
 
 import {OptionService} from '../../lib/services/option.service';
 import {MessageService} from '../../lib/services/message.service';
-import {RollupService} from '../../lib/services/rollup.service';
 
 export class BuildCommand {
   constructor(
     private optionService: OptionService,
-    private messageService: MessageService,
-    private rollupService: RollupService
+    private messageService: MessageService
   ) {}
 
   async run() {
-    const {inputPath, iifePath, tsconfigPath} = this.optionService.getOptions();
+    const {tsconfigPath} = this.optionService.getOptions();
     // compile
     await this.compileCode(tsconfigPath);
-    // bundle
-    await this.rollupService.bundleCode(inputPath, iifePath);
     // done
     return this.messageService.logOk(
       'Build addon completed, you may now push to the server.'

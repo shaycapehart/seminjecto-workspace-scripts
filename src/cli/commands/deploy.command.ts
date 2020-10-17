@@ -6,49 +6,43 @@ import * as sass from 'node-sass';
 import {pascalCase} from 'change-case';
 import {format} from 'prettier';
 
-import {OptionService} from '../../lib/services/option.service';
+import {OptionService, Options} from '../../lib/services/option.service';
 import {MessageService} from '../../lib/services/message.service';
 import {FileService} from '../../lib/services/file.service';
+import {RollupService} from '../../lib/services/rollup.service';
 
-export interface PushOptions {
+export interface DeployOptions {
+  dryRun?: boolean;
   copy?: string;
   vendor?: string;
 }
 
-export class PushCommand {
+export class DeployCommand {
   constructor(
     private optionService: OptionService,
     private messageService: MessageService,
-    private fileService: FileService
+    private fileService: FileService,
+    private rollupService: RollupService
   ) {}
 
-  async run(options: PushOptions) {
-    const {deployDir, iifePath} = this.optionService.getOptions();
-    // check if built content available
-    if (!(await pathExists(iifePath))) {
-      return this.messageService.logError(
-        'No resource for pushing, please build first.'
-      );
+  async run(cmdOpts: DeployOptions) {
+    const options = this.optionService.getOptions();
+    // staging
+    await this.staging(options, cmdOpts);
+    // deploy
+    if (!cmdOpts.dryRun) {
+      this.push();
+      await this.cleanup(options.deployDir);
     } else {
-      // copy resource to /.deploy
-      await this.staging(deployDir, iifePath, options);
-      // push using CLASP
-      this.pushing();
-      // remove /.deploy
-      await this.cleanup(deployDir);
-      // done
-      return this.messageService.logOk('Resource was pushed.');
+      return this.messageService.logOk('Deploy content saved.');
     }
   }
 
-  private async staging(
-    deployDir: string,
-    iifePath: string,
-    pushOptions: PushOptions
-  ) {
-    const {copy = '', vendor = ''} = pushOptions;
-    // copy the main file
-    await this.fileService.copy([iifePath], deployDir);
+  private async staging(options: Options, cmdOpts: DeployOptions) {
+    const {deployDir} = options;
+    const {copy = '', vendor = ''} = cmdOpts;
+    // bundle
+    await this.bundleCode(options);
     // sidebars & modals
     await this.saveComponents(deployDir, 'sidebar');
     await this.saveComponents(deployDir, 'modal');
@@ -58,12 +52,17 @@ export class PushCommand {
     await this.saveVendor(deployDir, vendor);
   }
 
-  private pushing() {
+  private push() {
     return execSync('clasp push', {stdio: 'inherit'});
   }
 
   private cleanup(deployDir: string) {
     return this.fileService.remove(deployDir);
+  }
+
+  private async bundleCode(options: Options) {
+    const {inputPath, iifePath} = options;
+    return this.rollupService.bundleCode(inputPath, iifePath);
   }
 
   private async saveComponents(deployDir: string, type: string) {

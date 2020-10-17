@@ -1,12 +1,12 @@
 {
   "name": "@lamnhan/seminjecto-workspace-scripts",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Scripts for Google Workspace addons.",
   "author": "Lam Nhan",
   "homepage": "https://lamnhan.com",
   "license": "MIT",
   "main": "src/public-api.js",
-  "typings": "src/public-api.d.ts",
+  "types": "src/public-api.d.ts",
   "bin": {
     "seminjecto-workspace-scripts": "src/bin.js"
   },

@@ -2,12 +2,12 @@ import {red} from 'chalk';
 import {Command} from 'commander';
 import {Lib as WorkspaceaddonscriptsModule} from '../lib/index';
 import {BuildCommand} from './commands/build.command';
-import {PushCommand} from './commands/push.command';
+import {DeployCommand} from './commands/deploy.command';
 
 export class Cli {
   private workspaceaddonscriptsModule: WorkspaceaddonscriptsModule;
   buildCommand: BuildCommand;
-  pushCommand: PushCommand;
+  deployCommand: DeployCommand;
 
   commander = [
     'seminjecto-workspace-scripts',
@@ -16,9 +16,10 @@ export class Cli {
 
   buildCommandDef: CommandDef = ['build', 'Build distribution package.'];
 
-  pushCommandDef: CommandDef = [
-    'push',
+  deployCommandDef: CommandDef = [
+    'deploy',
     'Push to the Apps Script server.',
+    ['-d, --dry-run', 'Staging only.'],
     ['--copy [value]', 'Copied resources, comma-seperated.'],
     ['--vendor [value]', 'Files for @vendor.js, comma-seperated.'],
   ];
@@ -27,13 +28,13 @@ export class Cli {
     this.workspaceaddonscriptsModule = new WorkspaceaddonscriptsModule();
     this.buildCommand = new BuildCommand(
       this.workspaceaddonscriptsModule.optionService,
-      this.workspaceaddonscriptsModule.messageService,
-      this.workspaceaddonscriptsModule.rollupService
+      this.workspaceaddonscriptsModule.messageService
     );
-    this.pushCommand = new PushCommand(
+    this.deployCommand = new DeployCommand(
       this.workspaceaddonscriptsModule.optionService,
       this.workspaceaddonscriptsModule.messageService,
-      this.workspaceaddonscriptsModule.fileService
+      this.workspaceaddonscriptsModule.fileService,
+      this.workspaceaddonscriptsModule.rollupService
     );
   }
 
@@ -57,15 +58,22 @@ export class Cli {
         .action(() => this.buildCommand.run());
     })();
 
-    // push
+    // deploy
     (() => {
-      const [command, description, copyOpt, vendorOpt] = this.pushCommandDef;
+      const [
+        command,
+        description,
+        dryRunOpt,
+        copyOpt,
+        vendorOpt,
+      ] = this.deployCommandDef;
       commander
         .command(command)
         .description(description)
+        .option(...dryRunOpt) // -d, --dry-run
         .option(...copyOpt) // --copy
         .option(...vendorOpt) // --vendor
-        .action(options => this.pushCommand.run(options));
+        .action(options => this.deployCommand.run(options));
     })();
 
     // help

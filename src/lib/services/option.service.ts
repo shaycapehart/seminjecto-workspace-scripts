@@ -1,9 +1,16 @@
+export interface Options {
+  deployDir: string;
+  inputPath: string;
+  iifePath: string;
+  tsconfigPath: string;
+}
+
 export class OptionService {
-  private options = {
+  private options: Options = {
     deployDir: '.deploy',
     inputPath: './src/hook.js',
-    iifePath: './src/addon.js',
-    tsconfigPath: './tsconfig-addon.json',
+    iifePath: './.deploy/addon.js',
+    tsconfigPath: './tsconfig-deploy.json',
   };
 
   constructor() {}

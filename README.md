@@ -11,7 +11,7 @@
 - [Command overview](#command-overview)
 - [Command reference](#command-reference)
   - [`build`](#command-build)
-  - [`push`](#command-push)
+  - [`deploy`](#command-deploy)
   - [`help`](#command-help)
 - [Detail API reference](https://lamnhan.com/seminjecto-workspace-scripts)
 
@@ -26,7 +26,7 @@
 Scripts for Google Workspace addons.
 
 - [`seminjecto-workspace-scripts build`](#command-build)
-- [`seminjecto-workspace-scripts push --copy [value] --vendor [value]`](#command-push)
+- [`seminjecto-workspace-scripts deploy --dry-run --copy [value] --vendor [value]`](#command-deploy)
 - [`seminjecto-workspace-scripts help`](#command-help)
 
 <h2><a name="command-reference"><p>Command reference</p>
@@ -37,13 +37,14 @@ Scripts for Google Workspace addons.
 
 Build distribution package.
 
-<h3><a name="command-push"><p><code>push</code></p>
+<h3><a name="command-deploy"><p><code>deploy</code></p>
 </a></h3>
 
 Push to the Apps Script server.
 
 **Options**
 
+- `-d, --dry-run`: Staging only.
 - `--copy [value]`: Copied resources, comma-seperated.
 - `--vendor [value]`: Files for @vendor.js, comma-seperated.
 
